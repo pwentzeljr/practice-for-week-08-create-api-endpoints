@@ -54,6 +54,9 @@ const server = http.createServer((req, res) => {
     // GET /dogs
     if (req.method === 'GET' && req.url === '/dogs') {
       // Your code here
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      res.write(JSON.stringify(dogs));
 
       return res.end();
     }
@@ -64,6 +67,16 @@ const server = http.createServer((req, res) => {
       if (urlParts.length === 3) {
         const dogId = urlParts[2];
         // Your code here
+        const dog = dogs.find(dog => dog.dogId === Number(dogId));
+        if (!dog) {
+          res.statusCode = 400;
+          res.setHeader('Content-Type', 'application/json');
+          res.write(JSON.stringify('No dog with that id found'));
+        } else {
+          res.statusCode = 200;
+          res.setHeader('Content-Type', 'application/json');
+          res.write(JSON.stringify(dog));
+        }
       }
       return res.end();
     }
@@ -72,6 +85,16 @@ const server = http.createServer((req, res) => {
     if (req.method === 'POST' && req.url === '/dogs') {
       const { name, age } = req.body;
       // Your code here
+      const newDog = {
+        dogId: getNewDogId(),
+        name: name,
+        age: Number(age)
+      }
+      dogs.push(newDog);
+
+      res.statusCode = 201;
+      res.setHeader('Content-Type', 'application/json');
+      res.write(JSON.stringify(newDog));
       return res.end();
     }
 
@@ -81,6 +104,13 @@ const server = http.createServer((req, res) => {
       if (urlParts.length === 3) {
         const dogId = urlParts[2];
         // Your code here
+        const dog = dogs.find(dog => dog.dogId === Number(dogId));
+        dog["name"] = req.body["name"];
+        dog["age"] = Number(req.body["age"]);
+
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.write(JSON.stringify(dog));
       }
       return res.end();
     }
@@ -91,6 +121,12 @@ const server = http.createServer((req, res) => {
       if (urlParts.length === 3) {
         const dogId = urlParts[2];
         // Your code here
+        const idx = dogs.findIndex(dog => dog.id = Number(dogId))
+        dogs.splice[idx, 1];
+
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.write(JSON.stringify({message: 'Successfully deleted'}));
       }
       return res.end();
     }
